@@ -26,6 +26,6 @@ test: 	$(OBJS) $(TESTS)
 	$(foreach test, $(TESTS), ./$(test);)
 
 clean:
-	$(RM) -f *.o *.mod $(TESTS)
+	$(RM) *.o *.mod $(TESTS)
 
 # Dependency information

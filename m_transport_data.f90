@@ -28,7 +28,7 @@ contains
       character(LEN=lineLen) :: line, prev_line
       real(dp)               :: temp_table(2, max_num_rows)
 
-      nL = 0     ! Set the number of lines to 0
+      nL           = 0 ! Set the number of lines to 0
       gas_name_len = len(gas_name)
 
       ! Set the line format to read, only depends on lineLen currently
@@ -36,7 +36,7 @@ contains
       line_fmt = "(A" // trim(adjustl(line_fmt)) // ")"
 
       ! Open 'file_name' (with error checking)
-      open(my_unit, FILE = file_name, STATUS = "OLD", ACTION = "READ", ERR = 999, IOSTAT = ioState)
+      open(my_unit, FILE = file_name, ACTION = "READ", ERR = 999, IOSTAT = ioState)
 
       ! Look for collision processes with the correct gas name in the file,
       ! which should contains entries like below:
@@ -63,6 +63,7 @@ contains
          end do
 
          ! prev_line holds the type of transport data, see the formatting above
+         ! cycle if this is not the right entry
          if (data_name /= trim(prev_line)) cycle
 
          ! Now we can check whether there is a comment, while scanning lines until dashes are found,
@@ -103,11 +104,13 @@ contains
          exit                   ! Done
       end do
 
+      close(my_unit)
       return
 
 999   continue ! If there was an error, the routine will end here
       print *, "TD_get_td_from_file error at line", nL
-      print *, "ioState = ", ioState, " while searching [", gas_name, "] in [", file_name, "]"
+      print *, "ioState = ", ioState, " in ", file_name
+      print *, "searching " // trim(gas_name) // ": " // trim(data_name)
       stop
 
    end subroutine TD_get_td_from_file
