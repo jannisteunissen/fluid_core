@@ -3,7 +3,7 @@ program test_m_time_steppers
 
   implicit none
   integer, parameter :: dp = kind(0.0d0)
-  integer, parameter :: n_vars = 10, max_num_steps = 10*1000, max_adap_steps = 30
+  integer, parameter :: n_vars = 10, max_num_steps = 1000, max_adap_steps = 30
   real(dp), parameter :: end_time = 1.0_dp, max_dt = huge(1.0_dp)
   integer :: n, n_steps, i_stepper
   real(dp) :: var_list(n_vars), sol_start(n_vars), sol_end(n_vars)
