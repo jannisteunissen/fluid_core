@@ -1,5 +1,5 @@
 ! Requires Fortran 2008 features: using internal procedure as argument
-program test_m_transportSchemes
+program test_m_transport_schemes
   use m_transport_schemes
   use m_time_steppers
 
@@ -9,7 +9,7 @@ program test_m_transportSchemes
   real(dp), parameter   :: test_diff_coeff = 0.0_dp
   real(dp), parameter   :: test_length     = 1.0_dp
   real(dp), parameter   :: end_time        = 0.1_dp * test_length / abs(test_velocity)
-  integer, parameter    :: max_n_cells     = 25*1000
+  integer, parameter    :: max_n_cells     = 5120
 
   real(dp)              :: delta_x, delta_t, time
   integer               :: n, n_cells, i_scheme
@@ -22,7 +22,7 @@ program test_m_transportSchemes
 
   time_stepper => STEP_rk4_1d
 
-  print *, "Testing m_transportSchemes.f90 implementation"
+  print *, "Testing m_transport_schemes.f90 implementation"
 
   do i_scheme = 1, 4
 
@@ -125,4 +125,4 @@ contains
   end function smootherstep
 
 
-end program test_m_transportSchemes
+end program test_m_transport_schemes

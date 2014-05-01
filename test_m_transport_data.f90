@@ -4,14 +4,13 @@ program test_m_transport_data
 
   integer :: n, data_size
   real(dp), allocatable :: x_data(:), y_data(:)
+  character(len=*), parameter :: in_file = "test_m_transport_data_input.txt"
+  character(len=*), parameter :: gas_name = "AIR"
 
   print *, "Testing m_transport_data.f90 implementation"
 
-  ! Read in test data
-  call TD_read_file("test_m_transport_data_input.txt", "AIR")
-
   ! Get some data
-  call TD_get_data("Efield[V/m]_energy[eV]", x_data, y_data)
+  call TD_get_td_from_file(in_file, gas_name, "Efield[V/m]_energy[eV]", x_data, y_data)
 
   print *, "The following data was found when searching for Efield[V/m]_energy[eV]"
   data_size = size(x_data)
@@ -21,7 +20,7 @@ program test_m_transport_data
   print *, ""
 
   ! Get some more data
-  call TD_get_data("Efield[V/m]_alphaEff[1/m]", x_data, y_data)
+  call TD_get_td_from_file(in_file, gas_name, "Efield[V/m]_alphaEff[1/m]", x_data, y_data)
 
   print *, "The following data was found when searching for Efield[V/m]_alphaEff[1/m]"
   data_size = size(x_data)
