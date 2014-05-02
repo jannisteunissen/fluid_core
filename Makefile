@@ -3,11 +3,12 @@ FFLAGS	:= -Wall -fcheck=all -ffpe-trap=invalid,zero,overflow -g -O3
 OBJS	:= m_transport_data.o m_time_steppers.o m_transport_schemes.o
 TESTS	:= test_m_transport_data test_m_transport_schemes test_m_time_steppers
 
-LIBS	:= fluid_core
-LIBDIRS := .
+INCDIRS := ../fosito
+LIBS	:= fluid_core fosito
+LIBDIRS := . ../fosito
 
 %.o: 	%.f90
-	$(FC) -c -o $@ $< $(FFLAGS)
+	$(FC) -c -o $@ $< $(FFLAGS) $(addprefix -I,$(INCDIRS))
 
 %:	%.o
 	$(FC) -o $@ $^ $(FFLAGS) $(addprefix -L,$(LIBDIRS)) $(addprefix -l,$(LIBS))
