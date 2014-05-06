@@ -1,17 +1,11 @@
 FC 	:= gfortran
 FFLAGS	:= -Wall -fcheck=all -ffpe-trap=invalid,zero,overflow -g -O3
 OBJS	:= m_transport_data.o m_time_steppers.o m_transport_schemes.o
-TESTS	:= test_m_transport_data test_m_transport_schemes test_m_time_steppers
 
-INCDIRS := ../fosito
-LIBS	:= fluid_core fosito
-LIBDIRS := . ../fosito
+INCDIRS :=
 
 %.o: 	%.f90
 	$(FC) -c -o $@ $< $(FFLAGS) $(addprefix -I,$(INCDIRS))
-
-%:	%.o
-	$(FC) -o $@ $^ $(FFLAGS) $(addprefix -L,$(LIBDIRS)) $(addprefix -l,$(LIBS))
 
 .PHONY: all test clean
 
@@ -21,12 +15,11 @@ libfluid_core.a: $(OBJS)
 	$(RM) $@
 	$(AR) rcs $@ $^
 
-$(TESTS): libfluid_core.a
-
-test: 	$(OBJS) $(TESTS)
-	$(foreach test, $(TESTS), ./$(test);)
+test: 	libfluid_core.a
+	$(MAKE) -C test
 
 clean:
-	$(RM) *.o *.mod $(TESTS)
+	$(RM) *.o *.mod
+	$(MAKE) -C test clean
 
 # Dependency information
