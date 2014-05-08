@@ -29,14 +29,14 @@ contains
       real(dp)               :: temp_table(2, max_num_rows)
 
       nL           = 0 ! Set the number of lines to 0
-      gas_name_len = len(gas_name)
+      gas_name_len = len_trim(gas_name)
 
       ! Set the line format to read, only depends on lineLen currently
       write(line_fmt, FMT = "(I6)") lineLen
       line_fmt = "(A" // trim(adjustl(line_fmt)) // ")"
 
       ! Open 'file_name' (with error checking)
-      open(my_unit, FILE = file_name, ACTION = "READ", ERR = 999, IOSTAT = ioState)
+      open(my_unit, FILE = trim(file_name), ACTION = "READ", ERR = 999, IOSTAT = ioState)
 
       ! Look for collision processes with the correct gas name in the file,
       ! which should contains entries like below:
@@ -57,19 +57,19 @@ contains
          line = ' '
          do
             prev_line = line
-            read(my_unit, FMT = line_fmt, ERR = 999, end = 999) line; nL = nL+1
+            read(my_unit, FMT = line_fmt, ERR = 999, end = 888) line; nL = nL+1
             line = adjustl(line)
-            if ( line(1:gas_name_len) == gas_name ) exit
+            if ( line(1:gas_name_len) == trim(gas_name) ) exit
          end do
 
          ! prev_line holds the type of transport data, see the formatting above
          ! cycle if this is not the right entry
-         if (data_name /= trim(prev_line)) cycle
+         if (trim(data_name) /= trim(prev_line)) cycle
 
          ! Now we can check whether there is a comment, while scanning lines until dashes are found,
          ! which indicate the start of the transport data
          do
-            read(my_unit, FMT = line_fmt, ERR = 999, end = 999) line; nL = nL+1
+            read(my_unit, FMT = line_fmt, ERR = 999, end = 777) line; nL = nL+1
             line = adjustl(line)
             if ( line(1:8) == "COMMENT:" ) cycle ! Do nothing for now
             if ( line(1:5) == "-----" ) exit
@@ -78,7 +78,7 @@ contains
          ! Read the transport data into a temporary array
          n_rows = 0
          do
-            read(my_unit, FMT = line_fmt, ERR = 999, end = 999) line; nL = nL+1
+            read(my_unit, FMT = line_fmt, ERR = 999, end = 777) line; nL = nL+1
             line = adjustl(line)
             if ( line(1:5) == "-----" ) then
                exit  ! Dashes mark the end of the data
@@ -86,7 +86,7 @@ contains
                cycle ! Ignore whitespace or comments
             else if (n_rows < max_num_rows) then
                n_rows = n_rows + 1
-               read(line, FMT = *, ERR = 999, end = 999) temp_table(:, n_rows)
+               read(line, FMT = *, ERR = 999, end = 777) temp_table(:, n_rows)
             else
                print *, "CS_read_file error: too many rows in ", file_name, " at line ", nL
             end if
@@ -107,10 +107,20 @@ contains
       close(my_unit)
       return
 
-999   continue ! If there was an error, the routine will end here
+777   continue ! If the end of the file is reached after finding data
+      print *, "TD_get_td_from_file reached end of file while reading data"
+      print *, "searching '" // trim(gas_name) // "': '" // trim(data_name) // "'"
+      stop
+
+888   continue ! If the end of the file is reached without finding data
+      print *, "TD_get_td_from_file reached end of file without finding data"
+      print *, "searching '" // trim(gas_name) // "': '" // trim(data_name) // "'"
+      stop
+
+999   continue ! If there was an input error, the routine will end here
       print *, "TD_get_td_from_file error at line", nL
       print *, "ioState = ", ioState, " in ", file_name
-      print *, "searching " // trim(gas_name) // ": " // trim(data_name)
+      print *, "searching '" // trim(gas_name) // "': '" // trim(data_name) // "'"
       stop
 
    end subroutine TD_get_td_from_file
