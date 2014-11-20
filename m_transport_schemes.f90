@@ -38,7 +38,7 @@ contains
        flux_f(n) = vel_f(n) * 0.5_dp * (dens_c(n)+ dens_c(n+1))
 
        ! Diffusive part with 2-nd order explicit method. dif_f has to be scaled by 1/dx
-       flux_f(n)    = flux_f(n) - 0.5_dp * dif_f(n) * (dens_c(n+1) - dens_c(n))
+       flux_f(n)    = flux_f(n) - dif_f(n) * (dens_c(n+1) - dens_c(n))
     end do
 
   end subroutine TS_dd_1d
@@ -64,7 +64,7 @@ contains
        end if
 
        ! Diffusive part with 2-nd order explicit method. dif_f has to be scaled by 1/dx
-       flux_f(n)    = flux_f(n) - 0.5_dp * dif_f(n) * (dens_c(n+1) - dens_c(n))
+       flux_f(n)    = flux_f(n) - dif_f(n) * (dens_c(n+1) - dens_c(n))
     end do
 
   end subroutine TS_dd_1d_up
@@ -91,13 +91,13 @@ contains
     ! Approximation at left and right boundary with first order upwind
     do n = 1, n_cc-1, n_cc-2
        if (vel_f(n) < 0.0_dp) then
-          flux_f(n) = vel_f(n) * dens_c(n+1) - 0.5_dp * dif_f(n) * grad(n)
+          flux_f(n) = vel_f(n) * dens_c(n+1) - dif_f(n) * grad(n)
        else
-          flux_f(n) = vel_f(n) * dens_c(n) - 0.5_dp * dif_f(n) * grad(n)
+          flux_f(n) = vel_f(n) * dens_c(n) - dif_f(n) * grad(n)
        end if
 
        ! This is a centered difference approximation
-       ! flux_f(n) = vel_f(n) * 0.5_dp * (dens_c(n) + dens_c(n+1)) - 0.5_dp * dif_f(n) * grad(n)
+       ! flux_f(n) = vel_f(n) * 0.5_dp * (dens_c(n) + dens_c(n+1)) - dif_f(n) * grad(n)
     end do
 
     do n = 2, n_cc - 2
@@ -112,7 +112,7 @@ contains
        end if
 
        ! Diffusive part with 2-nd order explicit method. dif_f has to be scaled by 1/dx
-       flux_f(n) = flux_f(n) - 0.5_dp * dif_f(n) * grad(n)
+       flux_f(n) = flux_f(n) - dif_f(n) * grad(n)
     end do
 
   end subroutine TS_dd_1d_up_fl
@@ -133,9 +133,9 @@ contains
      ! Approximation at left and right boundary with first order upwind
      do n = 1, n_cc-1, n_cc-2
         if (vel_f(n) < 0.0_dp) then
-           flux_f(n) = vel_f(n) * dens_c(n+1) - 0.5_dp * dif_f(n) * grad(n)
+           flux_f(n) = vel_f(n) * dens_c(n+1) - dif_f(n) * grad(n)
         else
-           flux_f(n) = vel_f(n) * dens_c(n) - 0.5_dp * dif_f(n) * grad(n)
+           flux_f(n) = vel_f(n) * dens_c(n) - dif_f(n) * grad(n)
         end if
      end do
 
@@ -150,7 +150,7 @@ contains
         end if
 
         ! Diffusive part with 2-nd order explicit method. dif_f has to be scaled by 1/dx
-        flux_f(n) = flux_f(n) - 0.5_dp * dif_f(n) * grad(n)
+        flux_f(n) = flux_f(n) - dif_f(n) * grad(n)
      end do
 
   end subroutine TS_dd_1d_up_fl_test
